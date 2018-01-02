@@ -36,9 +36,9 @@ class DefaultUploadFolder
             'dpsgwue_default_upload_filemount', $pageTs);
         if (isset($filemountConfig) && isset($filemountConfig['value'])
             && is_numeric($filemountConfig['value'])) {
+          $fileStorages = $backendUserAuthentication->getFileStorages();
 
-          $storage = $this->getFileStorages[$filemountConfig['value']];
-
+          $storage = $fileStorages[$filemountConfig['value']];
           if ($storage->isWritable()) {
             try {
               $tmpUploadFolder = $storage->getDefaultFolder();
