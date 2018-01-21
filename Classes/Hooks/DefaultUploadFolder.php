@@ -34,20 +34,38 @@ class DefaultUploadFolder
         $pageTs = BackendUtility::getPagesTSconfig($params['pid']);
         $filemountConfig = $backendUserAuthentication->getTSConfig(
             'dpsgwue_default_upload_filemount', $pageTs);
+        $folderConfig = $backendUserAuthentication->getTSConfig(
+            'dpsgwue_default_upload_filemount.folder', $pageTs);
         if (isset($filemountConfig) && isset($filemountConfig['value'])
             && is_numeric($filemountConfig['value'])) {
           $fileStorages = $backendUserAuthentication->getFileStorages();
 
           $storage = $fileStorages[$filemountConfig['value']];
           if ($storage->isWritable()) {
-            try {
-              $tmpUploadFolder = $storage->getDefaultFolder();
-              if ($tmpUploadFolder->checkActionPermission('write')) {
+            $foundFolder = false;
+            if (isset($folderConfig) && isset($folderConfig['value'])) {
+              try {
+                $tmpUploadFolder = $storage->getFolder($folderConfig['value']);
+                if ($tmpUploadFolder->checkActionPermission('write')) {
                   $uploadFolder = $tmpUploadFolder;
+                  $foundFolder = true;
+                }
+                $tmpUploadFolder = null;
+              } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
+                // If the folder is not accessible (no permissions / does not exist), ignore.
               }
-              $tmpUploadFolder = null;
-            } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
-              // If the folder is not accessible (no permissions / does not exist), ignore.
+            }
+            if (!$foundFolder) {
+              try {
+                $tmpUploadFolder = $storage->getDefaultFolder();
+                if ($tmpUploadFolder->checkActionPermission('write')) {
+                  $uploadFolder = $tmpUploadFolder;
+                  $foundFolder = true;
+                }
+                $tmpUploadFolder = null;
+              } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
+                // If the folder is not accessible (no permissions / does not exist), ignore.
+              }
             }
           }
         }

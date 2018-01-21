@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = [
     'author' => 'Frans Saris and DPSG Würzburg',
     'author_email' => 'technik@dpsg-wuerzburg.de',
     'author_company' => 'Beech.it and DPSG Würzburg',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'constraints' =>
         [
             'depends' =>
