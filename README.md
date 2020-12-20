@@ -19,4 +19,4 @@ Based on extension default_upload_folder (https://github.com/beechit/default_upl
 
 **Requirements:**
 
-    TYPO3 7 LTS or TYPO3 8.*
+    TYPO3 7 LTS or TYPO3 8.x or TYPO3 9.x
