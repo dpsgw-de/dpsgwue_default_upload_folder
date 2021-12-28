@@ -8,7 +8,7 @@ Based on extension default_upload_folder (https://github.com/beechit/default_upl
 **How to use:**
 
 1. Download from Github
-2. Install dpsgwue_extension default_upload_folder via the extension manager
+2. Install dpsgwue_default_upload_folder via the extension manager
 3. Create the default folders *(folder need to exists and editor needs to have access to the folder)*
 4. Add configuration to pageTs
 
@@ -19,4 +19,4 @@ Based on extension default_upload_folder (https://github.com/beechit/default_upl
 
 **Requirements:**
 
-    TYPO3 7 LTS or TYPO3 8.x or TYPO3 9.x
+    TYPO3 10 LTS

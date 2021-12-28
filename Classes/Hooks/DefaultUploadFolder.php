@@ -29,23 +29,21 @@ class DefaultUploadFolder
     {
         /** @var Folder $uploadFolder */
         $uploadFolder = $params['uploadFolder'];
-        //$table = $params['table'];
-        //$field = $params['field'];
         $pageTs = BackendUtility::getPagesTSconfig($params['pid']);
-        $filemountConfig = $backendUserAuthentication->getTSConfig(
-            'dpsgwue_default_upload_filemount', $pageTs);
-        $folderConfig = $backendUserAuthentication->getTSConfig(
-            'dpsgwue_default_upload_filemount.folder', $pageTs);
-        if (isset($filemountConfig) && isset($filemountConfig['value'])
-            && is_numeric($filemountConfig['value'])) {
+        //debug($pageTs, 'pageTs');
+        $filemountConfig = $pageTs['dpsgwue_default_upload_filemount'] ?? '';
+        $folderConfig = $pageTs['dpsgwue_default_upload_filemount.']['folder'] ?? '';
+        //debug($filemountConfig, 'filemount');
+        //debug($folderConfig, 'folder');
+        if (is_numeric($filemountConfig)) {
           $fileStorages = $backendUserAuthentication->getFileStorages();
 
-          $storage = $fileStorages[$filemountConfig['value']];
+          $storage = $fileStorages[$filemountConfig];
           if ($storage->isWritable()) {
             $foundFolder = false;
-            if (isset($folderConfig) && isset($folderConfig['value'])) {
+            if (!empty($folderConfig)) {
               try {
-                $tmpUploadFolder = $storage->getFolder($folderConfig['value']);
+                $tmpUploadFolder = $storage->getFolder($folderConfig);
                 if ($tmpUploadFolder->checkActionPermission('write')) {
                   $uploadFolder = $tmpUploadFolder;
                   $foundFolder = true;
