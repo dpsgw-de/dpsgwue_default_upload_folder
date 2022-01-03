@@ -36,33 +36,37 @@ class DefaultUploadFolder
         //debug($filemountConfig, 'filemount');
         //debug($folderConfig, 'folder');
         if (is_numeric($filemountConfig)) {
+          $fileMounts = $backendUserAuthentication->getFileMountRecords();
           $fileStorages = $backendUserAuthentication->getFileStorages();
 
-          $storage = $fileStorages[$filemountConfig];
-          if ($storage->isWritable()) {
-            $foundFolder = false;
-            if (!empty($folderConfig)) {
-              try {
-                $tmpUploadFolder = $storage->getFolder($folderConfig);
-                if ($tmpUploadFolder->checkActionPermission('write')) {
-                  $uploadFolder = $tmpUploadFolder;
-                  $foundFolder = true;
+          $fileMount_arr = array_filter($fileMounts, fn($element) => $element['uid'] == $filemountConfig);
+          if (count($fileMount_arr) == 1) {
+            $fileMount = array_pop($fileMount_arr);
+            $storage = $fileStorages[$fileMount['base']];
+            if ($storage->isWritable()) {
+              $foundFolder = false;
+              if (!empty($folderConfig)) {
+                try {
+                  $tmpUploadFolder = $storage->getFolder($folderConfig);
+                  if ($tmpUploadFolder->checkActionPermission('write')) {
+                    $uploadFolder = $tmpUploadFolder;
+                    $foundFolder = true;
+                  }
+                  $tmpUploadFolder = null;
+                } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
+                  // If the folder is not accessible (no permissions / does not exist), ignore.
                 }
-                $tmpUploadFolder = null;
-              } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
-                // If the folder is not accessible (no permissions / does not exist), ignore.
               }
-            }
-            if (!$foundFolder) {
-              try {
-                $tmpUploadFolder = $storage->getDefaultFolder();
-                if ($tmpUploadFolder->checkActionPermission('write')) {
-                  $uploadFolder = $tmpUploadFolder;
-                  $foundFolder = true;
+              if (!$foundFolder) {
+                try {
+                  $tmpUploadFolder = $storage->getFolder($fileMount['path']);
+                  if ($tmpUploadFolder->checkActionPermission('write')) {
+                    $uploadFolder = $tmpUploadFolder;
+                  }
+                  $tmpUploadFolder = null;
+                } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
+                  // If the folder is not accessible (no permissions / does not exist), ignore.
                 }
-                $tmpUploadFolder = null;
-              } catch (\TYPO3\CMS\Core\Resource\Exception $folderAccessException) {
-                // If the folder is not accessible (no permissions / does not exist), ignore.
               }
             }
           }

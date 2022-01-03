@@ -6,3 +6,6 @@ Add Support TYPO3 9.x
 
 1.2.0
 Update for TYPO3 10.x
+
+1.3.0
+Breaking change: now the given ID references a filemount instead of a filestorage
